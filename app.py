@@ -16,25 +16,21 @@ def perform_query():
     cmd2 = request.args.get('cmd2')
     value1 = request.args.get('value1')
     value2 = request.args.get('value2')
-    if not (cmd1 and value1 and file_name):
-        return abort(400, 'cmd1 and value1 and file_name ')
+    if not (cmd1 and value1 and file_name and cmd2 and value2):
+        return abort(400, 'cmd1 and value1 and file_name and cmd2 and value2')
 
     # проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
-    file = os.path.join(BASE_DIR, file_name)
+    file = os.path.join(DATA_DIR, file_name)
     if not os.path.exists(file):
         return abort(400, " file_name is not data")
 
     # с помощью функционального программирования (функций filter, map), итераторов/генераторов сконструировать запрос
     # вернуть пользователю сформированный результат
 
-    with open('./data/apache_logs.txt') as f:
+    with open(file) as f:
         res = query(cmd1, value1, f)
-        if cmd2 is not None:
-            res = query(cmd2, value2, res)
-    try:
+        res = query(cmd2, value2, res)
         res = '\n'.join(res)
-    except Exception:
-        return res
     return app.response_class(res, content_type="text/plain")
 
 
